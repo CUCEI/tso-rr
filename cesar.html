@@ -1,0 +1,101 @@
+<html>
+<script>
+    var MAX_PREPARED_TIME = 5;
+    var QUANTUM           = 5;
+    var BLOCKED_TIME      = 3;
+
+    var prepared     = [];
+    var blocked      = [];
+    var in_execution = {};
+    var news         = [];
+    var finished     = [];
+    var pid_count    = 0;
+
+    function eventoCrear(name,time){
+        var new_process = {
+            "pid": (pid_count++),
+            "name": name,
+            "time": time,
+            "state": 'new'
+        };
+
+        if(in_execution.lenght === 0){
+            in_execution = new_process;
+            executeProcess();
+        }
+        else if(prepared.lenght < MAX_PREPARED_TIME){
+            prepared.push(new_process);
+        }
+        else{
+            news.push(new_process);
+        }
+    }
+
+    function executeProcess() {
+
+        secondCounter();
+
+        function secondCounter () {
+            setTimeout(function () {
+                in_execution.time--;
+
+                if (in_execution.time > 0) {
+                    secondCounter();
+                }
+                else if(in_execution.time === 0){
+                    in_execution.state = 'finished';
+                    finishProcess();
+                }
+            }, 1000);
+        }
+    }
+
+    function transaction(){
+        if(prepared.length > 0){
+            in_execution = prepared.shift();
+
+            if(news.length > 0){
+                prepared.push(news.shift());
+            }
+
+            executeProcess();
+        }
+    }
+
+    function finishProcess(){
+        finished.push(in_execution);
+        transaction();
+
+    }
+
+    function blockProcess(){
+        blocked.push(in_execution);
+        transaction();
+    }
+    function completeProcesses(){
+        in_execution.state = 'finished';
+
+        finished.push(in_execution);
+
+        finished.concat(prepared);
+
+        finished.concat(blocked);
+
+        finished.concat(news);
+    }
+    switch(key){
+        case 'T':
+            completeProcesses();
+        break;
+        case 'E':
+            in_execution.state = 'error';
+            finishProcess();
+        break;
+        case 'B':
+            in_execution.state = 'blocked';
+            blockProcess();
+        break;
+    }
+
+</script>
+</html>
