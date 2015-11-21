@@ -16,7 +16,8 @@
             "pid": (pid_count++),
             "name": name,
             "time": time,
-            "state": 'new'
+            "state": 'new',
+            "timeouts": []
         };
 
         if(in_execution.lenght === 0){
@@ -36,7 +37,7 @@
         secondCounter();
 
         function secondCounter () {
-            setTimeout(function () {
+            var timeout = setTimeout(function () {
                 in_execution.time--;
 
                 if (in_execution.time > 0) {
@@ -46,7 +47,9 @@
                     in_execution.state = 'finished';
                     finishProcess();
                 }
+                timeout.pop();
             }, 1000);
+            in_execution.timeouts.push(timeout);
         }
     }
 
@@ -65,15 +68,26 @@
     function finishProcess(){
         finished.push(in_execution);
         transaction();
-
     }
 
     function blockProcess(){
+        deleteExecution();
         blocked.push(in_execution);
         transaction();
     }
+
+    function deleteExecution(){
+        in_execution.timeouts.forEach(function(timeout){
+            clearTimeout(timeout);
+        });
+
+        in_execution.timeouts = [];
+    }
+
     function completeProcesses(){
         in_execution.state = 'finished';
+
+        deleteExecution();
 
         finished.push(in_execution);
 
