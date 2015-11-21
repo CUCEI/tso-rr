@@ -4,6 +4,7 @@
   "description": "bla",
   "main": "index.js",
   "dependencies": {
+    "backbone": "^1.2.3",
     "bootstrap": "^3.3.5",
     "jquery": "^2.1.4",
     "react": "^0.14.3",
