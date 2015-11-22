@@ -1,9 +1,6 @@
 import React from 'react';
-import _ from 'underscore';
 
-import Process from './Process.jsx';
-
-export default class ProcessList extends React.Component {
+export default class ResultList extends React.Component {
     constructor () {
         super();
 
@@ -23,23 +20,27 @@ export default class ProcessList extends React.Component {
     renderProcesses (element) {
 
         return (
-            <Process
-                element={element}
-            />
+            <tr>
+                <td>{element.getID()}</td>
+                <td>{element.get('name')}</td>
+                <td>{element.get('time')}</td>
+                <td>{element.getWaitingTime()}</td>
+                <td>{element.get('state')}</td>
+            </tr>
         );
     }
     render () {
-        let type = this.props.type;
-
         return (
             <section className={this.props.className}>
-                <h3>{type.charAt(0).toUpperCase() + type.slice(1) + (type == 'ejecucion'? '': 's')}</h3>
+                <h3>Resultados</h3>
                 <table className="table table-striped">
                     <thead>
                         <tr>
                             <th>PID</th>
                             <th>Nombre</th>
-                            <th>Servicio</th>
+                            <th>Duración</th>
+                            <th>T. espera</th>
+                            <th>Estado</th>
                         </tr>
                     </thead>
                     <tbody>
